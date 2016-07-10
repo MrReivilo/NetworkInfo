@@ -1,6 +1,7 @@
 package net.casaclaude.networkinfo;
 
 import android.content.Context;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.telephony.CellInfo;
@@ -20,8 +21,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void writeToFile(String data) {
         try {
-            File myFile = new File("/sdcard/networkinfo.txt");
-            myFile.createNewFile();
+            String baseDir = Environment.getExternalStorageDirectory().getAbsolutePath();
+            String fileName = "networkinfo.txt";
+            File myFile = new File(baseDir + File.separator + fileName);
+
+            boolean b = myFile.createNewFile();
+
             FileOutputStream fileOutputStream = new FileOutputStream(myFile);
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream);
             outputStreamWriter.write(data);
@@ -30,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
         catch (IOException e) {
             Log.e("Exception", "File write failed: " + e.toString());
         }
-    };
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,21 +51,24 @@ public class MainActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        String getCellIdentity;
+                        String getCellIdentity = null;
                         List<CellInfo> cellInfoList = telephonyManager.getAllCellInfo();
-                        for (CellInfo cellInfo : cellInfoList)
-                        {
-                            if (cellInfo.isRegistered())
+                        if (cellInfoList != null) {
+                            for (CellInfo cellInfo : cellInfoList)
                             {
-                                getCellIdentity = cellInfo.toString();
+                                if (cellInfo.isRegistered())
+                                {
+                                    getCellIdentity = cellInfo.toString();
+                                }
                             }
-                            else
-                            {
-                                getCellIdentity = "NOT REGISTERED";
-                            }
-                            tv.setText(getCellIdentity);
-                            writeToFile(getCellIdentity);
                         }
+                        else {
+                            getCellIdentity = "NO NETWORK/NOT REGISTERED";
+                        }
+                        if (tv != null) {
+                            tv.setText(getCellIdentity);
+                        }
+                        writeToFile(getCellIdentity);
                     }
                 });
             }
