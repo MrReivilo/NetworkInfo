@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        String getCellIdentity = null;
+                        String getCellIdentity = "NO NETWORK/NOT REGISTERED";
                         List<CellInfo> cellInfoList = telephonyManager.getAllCellInfo();
                         if (cellInfoList != null) {
                             for (CellInfo cellInfo : cellInfoList)
@@ -61,9 +61,6 @@ public class MainActivity extends AppCompatActivity {
                                     getCellIdentity = cellInfo.toString();
                                 }
                             }
-                        }
-                        else {
-                            getCellIdentity = "NO NETWORK/NOT REGISTERED";
                         }
                         if (tv != null) {
                             tv.setText(getCellIdentity);
