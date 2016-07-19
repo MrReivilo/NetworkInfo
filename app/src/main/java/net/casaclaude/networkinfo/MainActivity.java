@@ -5,7 +5,9 @@ import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.telephony.CellInfo;
+import android.telephony.CellLocation;
 import android.telephony.TelephonyManager;
+import android.telephony.gsm.GsmCellLocation;
 import android.util.Log;
 import android.widget.TextView;
 
@@ -52,7 +54,10 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         String getCellIdentity = "NO NETWORK/NOT REGISTERED";
+
                         List<CellInfo> cellInfoList = telephonyManager.getAllCellInfo();
+                        GsmCellLocation cellLocation = (GsmCellLocation)telephonyManager.getCellLocation();
+
                         if (cellInfoList != null) {
                             for (CellInfo cellInfo : cellInfoList)
                             {
@@ -62,6 +67,10 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             }
                         }
+                        else if (cellLocation != null) {
+                            getCellIdentity = "CellLocation:{mCid=" + cellLocation.getCid() + " mLac=" + cellLocation.getLac() + " mPsc=" + cellLocation.getPsc() + "}";
+                        }
+
                         if (tv != null) {
                             tv.setText(getCellIdentity);
                         }
